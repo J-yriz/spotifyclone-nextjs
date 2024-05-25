@@ -33,8 +33,8 @@ export default function Home(req) {
             if (!error && response.statusCode === 200) {
                 fs.readFile('.env', 'utf8', (err, data) => {
                     const file = data.trim()
-                        .replace(/^\s*AKSES_TOKEN=.*$/gm, '')
-                        .replace(/^\s*REFRESH_TOKEN=.*$/gm, '')
+                        .replace(/^\s*NEXT_PUBLIC_AKSES_TOKEN=.*$/gm, '')
+                        .replace(/^\s*NEXT_PUBLIC_REFRESH_TOKEN=.*$/gm, '')
                         .replace(/^\s*TOKEN_TYPE=.*$/gm, '')
                         .replace(/^\s*EXPIRES_IN=.*$/gm, '')
                         .replace(/^\s*SCOPE=.*$/gm, '')
@@ -43,6 +43,6 @@ export default function Home(req) {
                 });
             }
         });
-        redirect('/');
+        redirect('/spotify');
     }
 };
