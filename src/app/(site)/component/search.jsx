@@ -1,32 +1,32 @@
-'use client';
-
-import { useState } from 'react';
 import getID from "../getID";
-import ResultSearch from "./resultSearch";
+import { redirect } from 'next/navigation';
 
-export default function Search() {
-    const [results, setResults] = useState([]);
-
+export default function Search({ setResults, token }) {
     const handleSubmit = async (event) => {
         let searchValue = event.target.value;
-        if ( searchValue === "" ) {
-            searchValue = " "
+        if (searchValue === "") {
+            searchValue = " ";
         } else {
-            const data = await getID(searchValue, 'track');
-            const dataFilter = data.map((e, i) => {
-                return {
-                    music_name: e.album.name,
-                    artist_name: e.artists[0].name,
-                    image: e.album.images[0].url,
-                    duration: e.duration_ms
-                };
-            });
-            setResults(dataFilter);
+            const data = await getID(searchValue, token);
+            if ( data === 401 ) {
+                alert('Token Expired\nPlease login again');
+            } else {
+                const dataFilter = data.map((e, i) => {
+                    return {
+                        music_name: e.album.name,
+                        artist_name: e.artists[0].name,
+                        image: e.album.images[0].url,
+                        duration: e.duration_ms,
+                        uri: e.uri
+                    };
+                });
+                setResults(dataFilter);
+            }
         }
     };
 
     return (
-        <main>
+        <div className={`search`}>
             <form className="container flex justify-center">
                 <div className="border-4 border-black my-5 p-2 rounded-full bg-black flex items-center justify-center">
                     <label htmlFor="search" className="text-green-400 text-xl font-bold pr-3">Search</label>
@@ -38,7 +38,6 @@ export default function Search() {
                     </button> */}
                 </div>
             </form>
-            <ResultSearch results={results} />
-        </main>
+        </div>
     );
 }

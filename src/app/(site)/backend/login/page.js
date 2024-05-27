@@ -6,7 +6,7 @@ const redirect_uri = 'http://localhost:3300/backend/callback';
 
 export default function Home() {
     const state = generateRandomString(16, process.env.CLIENT_ID);
-    const scope = 'user-read-private user-read-email';
+    const scope = 'streaming user-read-private user-read-email app-remote-control user-read-playback-state user-modify-playback-state user-read-currently-playing';
 
     redirect(`https://accounts.spotify.com/authorize?${
         queryString.stringify({
