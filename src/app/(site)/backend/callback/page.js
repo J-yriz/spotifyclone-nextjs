@@ -3,8 +3,9 @@ import 'dotenv/config';
 import request from 'request';
 import queryString from 'query-string';
 import { redirect } from 'next/navigation';
+import Config from '@/../config'
 
-const redirect_uri = 'http://localhost:3300/backend/callback';
+const redirect_uri = `${Config().redirect_uri}/backend/callback`;
 
 export default function Home(req) {
     const { code, state } = req.searchParams;
@@ -24,7 +25,7 @@ export default function Home(req) {
             },
             headers: {
                 'content-type': 'application/x-www-form-urlencoded',
-                'Authorization': 'Basic ' + (Buffer.from(process.env.CLIENT_ID + ':' + process.env.CLIENT_SECRET).toString('base64'))
+                'Authorization': 'Basic ' + (Buffer.from(Config().client_id + ':' + Config().client_secret).toString('base64'))
             },
             json: true
         };
@@ -35,12 +36,10 @@ export default function Home(req) {
                     const file = data.trim()
                         .replace(/^\s*NEXT_PUBLIC_AKSES_TOKEN=.*$/gm, '')
                         .replace(/^\s*NEXT_PUBLIC_REFRESH_TOKEN=.*$/gm, '')
-                        .replace(/^\s*TOKEN_TYPE=.*$/gm, '')
-                        .replace(/^\s*EXPIRES_IN=.*$/gm, '')
-                        .replace(/^\s*SCOPE=.*$/gm, '')
-                        .trim() + `\nNEXT_PUBLIC_AKSES_TOKEN="${body.access_token}" \nTOKEN_TYPE="${body.token_type}" \nEXPIRES_IN=${body.expires_in} \nNEXT_PUBLIC_REFRESH_TOKEN="${body.refresh_token}" \nSCOPE="${body.scope}"`;
+                        .trim() + `\nNEXT_PUBLIC_AKSES_TOKEN="${body.access_token}" \nNEXT_PUBLIC_REFRESH_TOKEN="${body.refresh_token}"`;
                     fs.writeFileSync('.env', file, 'utf8');
                 });
+                console.log(body.access_token);
             }
         });
         redirect('/spotify');

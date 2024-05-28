@@ -5,6 +5,7 @@ import Search from "../component/search";
 import ResultSearch from "../component/resultSearch";
 import PlayBack from '../component/playBack';
 
+// Take data token from .env
 const access_token = process.env.NEXT_PUBLIC_AKSES_TOKEN;
 
 export default function Home() {

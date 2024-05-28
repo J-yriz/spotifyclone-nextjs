@@ -1,17 +1,18 @@
 import 'dotenv/config';
 import queryString from 'query-string';
 import { redirect } from 'next/navigation'
+import Config from '@/../config'
 
-const redirect_uri = 'http://localhost:3300/backend/callback';
+const redirect_uri = `${Config().redirect_uri}/backend/callback`;
 
 export default function Home() {
-    const state = generateRandomString(16, process.env.CLIENT_ID);
+    const state = generateRandomString(16, Config().client_id);
     const scope = 'streaming user-read-private user-read-email app-remote-control user-read-playback-state user-modify-playback-state user-read-currently-playing';
 
     redirect(`https://accounts.spotify.com/authorize?${
         queryString.stringify({
             response_type: 'code',
-            client_id: process.env.CLIENT_ID,
+            client_id: Config().client_id,
             scope,
             redirect_uri,
             state
