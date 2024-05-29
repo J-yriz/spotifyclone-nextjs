@@ -5,6 +5,7 @@ import Image from "next/image";
 export default function ResultSearch({ results, setUri }) {
   const handleClick = (uri) => {
     setUri([uri.target.getAttribute('data-uri')]);
+    console.log(uri.target.getAttribute('data-uri'));
   };
 
   return (
