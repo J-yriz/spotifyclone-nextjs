@@ -1,10 +1,15 @@
-export default function CheckMe({ token }) {
+export default function CheckMe({ music }) {
     async function handleClick() {
-        const respone = await fetch('https://api.spotify.com/v1/me/player', {
+        const respone = await fetch('http://0.tcp.ap.ngrok.io:16113/take', {
+            method: 'POST',
             headers: {
-                Authorization: 'Bearer ' + token
-            }
-        }) 
+                Authorization: 'testingajah',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                track: `ytsearch:${music}`
+            })
+        })
         const data = await respone.json();
         console.log(data);
     }

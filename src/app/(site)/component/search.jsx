@@ -1,6 +1,7 @@
-export default function Search({ setResults, token }) {
+export default function Search({ setResults, token, lavalink }) {
     const handleSubmit = async (event) => {
-        let searchValue = event.target.value;
+        event.preventDefault();
+        let searchValue = event.target.search.value;
         if (searchValue === "") {
             searchValue = " ";
         } else {
@@ -8,31 +9,32 @@ export default function Search({ setResults, token }) {
             if ( data === 401 ) {
                 alert('Token Expired\nPlease login again');
             } else {
-                const dataFilter = data.map((e, i) => {
+                const dataFilter = data.map(async(e, i, a) => {
                     return {
                         music_name: e.album.name,
                         artist_name: e.artists[0].name,
                         image: e.album.images[0].url,
                         duration: e.duration_ms,
-                        uri: e.uri
-                    };
+                        uri: await getLink(`${e.album.name} - ${e.artists[0].name}`, lavalink)
+                    }
                 });
-                setResults(dataFilter);
+                const dataFilterd = await Promise.all(dataFilter);
+                setResults(dataFilterd);
             }
         }
     };
 
     return (
         <div className={`search`}>
-            <form className="container flex justify-center">
+            <form className="container flex justify-center" onSubmit={handleSubmit}>
                 <div className="border-4 border-black my-5 p-2 rounded-full bg-black flex items-center justify-center">
                     <label htmlFor="search" className="text-green-400 text-xl font-bold pr-3">Search</label>
-                    <input type="text" id="search" name="search" onKeyUp={handleSubmit} className="mr-3 p-1 border-2 outline-none rounded-lg border-black" placeholder="Rex Orange County" />
-                    {/* <button type="submit" className="submit">
+                    <input type="text" id="search" name="search" className="mr-3 p-1 border-2 outline-none rounded-lg border-black" placeholder="Rex Orange County" />
+                    <button type="submit" className="submit">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="white" className="w-6 h-6">
                             <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                         </svg>
-                    </button> */}
+                    </button>
                 </div>
             </form>
         </div>
@@ -54,4 +56,22 @@ async function getID(artist, access_token) {
         return data.tracks.items;
     }
 
+}
+
+async function getLink(name, lavalink) {
+    const { host, port, password } = lavalink;
+    if (name) {
+        const respone = await fetch(`${host}${port}/take`, {
+            method: 'POST',
+            headers: {
+                Authorization: password,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                track: `ytsearch:${name}`
+            })
+        })
+        const data = await respone.json();
+        return data.track.info.uri;
+    }
 }
