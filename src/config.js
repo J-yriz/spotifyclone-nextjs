@@ -7,7 +7,7 @@ export default {
     // Lavalink configuration
     lavalink: {
         host: 'http://0.tcp.ap.ngrok.io:' || process.env.NEXT_PUBLIC_HOST,
-        port: '14841' || process.env.NEXT_PUBLIC_PORT,
+        port: '16447' || process.env.NEXT_PUBLIC_PORT,
         password: 'testingajah' || process.env.NEXT_PUBLIC_PASSWORD_LAVALINK,
         secure: true
     }

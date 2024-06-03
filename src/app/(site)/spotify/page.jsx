@@ -1,26 +1,33 @@
 'use client';
-import { useState } from 'react';
-import config from '@/config';
+import Cryptr from 'cryptr';
+import Cookies from 'js-cookie';
+import { useState, useEffect } from 'react';
 
+import config from '@/config';
 import Search from "../component/search";
 import ResultSearch from "../component/resultSearch";
 import PlayBack from '../component/playBack';
 import CheckMe from '../component/checkMe';
 
-const access_token = config.access_token;
-
 export default function Home() {
     const [results, setResults] = useState([]);
     const [uri, setUri] = useState([]);
+    const [token, setToken] = useState('');
+    
+    useEffect(() => {
+        const tokenMiaw = Cookies.get("token");
+        const cryptr = new Cryptr('myTotallySecretKey', { encoding: 'base64', pbkdf2Iterations: 10000, saltLength: 20 });
+        if (tokenMiaw) {
+            setToken(cryptr.decrypt(tokenMiaw));
+        }
+    }, []);
 
-    console.log('access_token', access_token);
 
     return (
         <main>
-            <Search setResults={setResults} token={access_token} lavalink={config.lavalink} />
+            <Search setResults={setResults} token={token} lavalink={config.lavalink} />
             <ResultSearch results={results} setUri={setUri} />
-            <PlayBack token={access_token} uri={uri} />
-            {/* <CheckMe token={access_token} music={`somebody pleasure`} /> */}
+            <PlayBack token={token} uri={uri} />
         </main>
     );
 }
