@@ -1,4 +1,7 @@
+import { useRouter } from "next/navigation";
+
 export default function Search({ setResults, token, lavalink }) {
+    const router = useRouter();
     const handleSubmit = async (event) => {
         event.preventDefault();
         let searchValue = event.target.search.value;
@@ -7,7 +10,8 @@ export default function Search({ setResults, token, lavalink }) {
         } else {
             const data = await getID(searchValue, token);
             if ( data === 401 ) {
-                alert('Token Expired\nPlease login again');
+                alert('Token Expired');
+                router.push('/');
             } else {
                 const dataFilter = data.map(async(e, i, a) => {
                     return {

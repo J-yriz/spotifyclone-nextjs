@@ -6,8 +6,8 @@ export default {
     redirect_uri: '' || process.env.NEXT_PUBLIC_REDIRECT_URI,
     // Lavalink configuration
     lavalink: {
-        host: 'http://0.tcp.ap.ngrok.io:' || process.env.NEXT_PUBLIC_HOST,
-        port: '16447' || process.env.NEXT_PUBLIC_PORT,
+        host: 'http://localhost:' || process.env.NEXT_PUBLIC_HOST,
+        port: '3000' || process.env.NEXT_PUBLIC_PORT,
         password: 'testingajah' || process.env.NEXT_PUBLIC_PASSWORD_LAVALINK,
         secure: true
     }
