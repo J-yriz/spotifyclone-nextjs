@@ -8,8 +8,8 @@ const { client_id, client_secret, redirect_uri, lavalink: { host, port } } = con
 
 export default function GetToken({ code }) {
     const router = useRouter();
-    const cryptr = new Cryptr('myTotallySecretKey', { encoding: 'base64', pbkdf2Iterations: 10000, saltLength: 20 });
     const diGunakan = useRef(false);
+    const cryptr = new Cryptr('myTotallySecretKey', { encoding: 'base64', pbkdf2Iterations: 10000, saltLength: 20 });
     const getToken = async () => {
         if (diGunakan.current) return;
         diGunakan.current = true;
@@ -38,14 +38,9 @@ export default function GetToken({ code }) {
             router.push("/spotify");
         } catch (error) {
             console.error("Failed to get access token:", error);
-        } finally {
-            diGunakan.current = false;
         }
     }
     useEffect(() => {
-        let isMounted = true;
-        console.log(isMounted);
-        if (isMounted && !diGunakan.current) getToken();
-        return () => isMounted = false;
+        if (!diGunakan.current) getToken();
     }, []);
 }

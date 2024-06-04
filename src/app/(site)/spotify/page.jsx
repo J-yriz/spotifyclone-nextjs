@@ -11,7 +11,7 @@ import CheckMe from '../component/checkMe';
 
 export default function Home() {
     const [results, setResults] = useState([]);
-    const [uri, setUri] = useState([]);
+    const [data, setData] = useState([]);
     const [token, setToken] = useState('');
     
     useEffect(() => {
@@ -26,8 +26,8 @@ export default function Home() {
     return (
         <main>
             <Search setResults={setResults} token={token} lavalink={config.lavalink} />
-            <ResultSearch results={results} setUri={setUri} />
-            <PlayBack token={token} uri={uri} />
+            <ResultSearch results={results} setData={setData} />
+            <PlayBack token={token} data={data} />
         </main>
     );
 }

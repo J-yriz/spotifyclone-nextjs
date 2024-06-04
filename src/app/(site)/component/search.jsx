@@ -13,17 +13,29 @@ export default function Search({ setResults, token, lavalink }) {
                 alert('Token Expired');
                 router.push('/');
             } else {
-                const dataFilter = data.map(async(e, i, a) => {
+                const dataFilter = data.map(async(e) => {
+                    const data = await getLink(`${e.album.name} - ${e.artists[0].name}`, lavalink);
                     return {
                         music_name: e.album.name,
                         artist_name: e.artists[0].name,
                         image: e.album.images[0].url,
-                        duration: e.duration_ms,
-                        uri: await getLink(`${e.album.name} - ${e.artists[0].name}`, lavalink)
+                        duration: data[0],
+                        uri: data[1]
                     }
                 });
                 const dataFilterd = await Promise.all(dataFilter);
-                setResults(dataFilterd);
+                const arrayData = [];
+                let i = 0;
+                const nameSet = new Set();
+                for (const name of dataFilterd) {
+                    i++;
+                    if (!nameSet.has(name.music_name) ) {
+                        nameSet.add(name.music_name);
+                        arrayData.push(name);
+                    }
+                    if (i > 10) break;
+                }
+                setResults(arrayData);
             }
         }
     };
@@ -47,7 +59,7 @@ export default function Search({ setResults, token, lavalink }) {
 
 async function getID(artist, access_token) {
 
-    const response = await fetch(`https://api.spotify.com/v1/search?q=${artist}&type=track&market=ES&limit=10`, {
+    const response = await fetch(`https://api.spotify.com/v1/search?q=${artist}&type=track&market=ES&limit=15`, {
         headers: {
             Authorization: 'Bearer ' + access_token
         }
@@ -76,6 +88,6 @@ async function getLink(name, lavalink) {
             })
         })
         const data = await respone.json();
-        return data.track.info.uri;
+        return [data.track.info.length, data.track.info.uri];
     }
 }
