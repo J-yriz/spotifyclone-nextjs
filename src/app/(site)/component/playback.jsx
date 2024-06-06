@@ -1,12 +1,12 @@
 import Image from "next/image";
 import { useState } from "react";
 
-export default function PlayBack({ token, uri }) {
-    const [volume, setVolume] = useState(100);
-    const [volumeUser, setVolumeUser] = useState(0);
-    const [progress, setProgress] = useState(0);
+export default function PlayBack({ token, data }) {
     const [show, setShow] = useState(true);
+    const [volume, setVolume] = useState(100);
     // buat untuk value dari show diambil dari playMusic yang dijalankan
+    const [progress, setProgress] = useState(0);
+    const [volumeUser, setVolumeUser] = useState(0);
     const [showVolume, setShowVolume] = useState(true);
     // buat untuk value dari volume dan showVolume diambil dari data user yang sudah login
     const simulateProgress = () => {
@@ -18,7 +18,9 @@ export default function PlayBack({ token, uri }) {
     }
     const handleVolumeShowVolume = () => {
         setShowVolume(!showVolume);
-        showVolume ? setVolume(0) : setVolume(volumeUser);
+        if (showVolume) setVolume(0); 
+        else if (volumeUser <= 0) setVolume(100);
+        else setVolume(volumeUser);
     }
     const handleVolume = (e) => {
         setVolume(e.target.value);
@@ -26,7 +28,6 @@ export default function PlayBack({ token, uri }) {
         e.target.value > 0 ? setShowVolume(true) : setShowVolume(false);
     }
     // Todolist tambahkan penyimanan volume user ke dalam bentuk json, jika user baru masuk add user baru dengan volume 100
-
 
     return (
         // Example PlayBack Component use Rex Orange County data
@@ -75,7 +76,7 @@ export default function PlayBack({ token, uri }) {
                                 <div className={`w-96 max-w-xl bg-gray-200 rounded-full h-1 overflow-hidden`}>
                                     <div className={`bg-blue-600 h-1 rounded-full`} style={{ width: `${progress}%` }}></div>
                                 </div>
-                                <p className={`ml-5`}>3:54</p>
+                                <p className={`ml-5`}>{data?.[1] || "00:00"}</p>
                             </div>
                         </div>
                         <div className={`volumeMusic flex items-center mr-5`}>
