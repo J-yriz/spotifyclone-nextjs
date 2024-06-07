@@ -11,7 +11,7 @@ import CheckMe from '../component/checkMe';
 
 export default function Home() {
     const [results, setResults] = useState([]);
-    const [data, setData] = useState([]);
+    const [data, setData] = useState();
     const [token, setToken] = useState('');
     
     useEffect(() => {

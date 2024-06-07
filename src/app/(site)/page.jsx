@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Login from "@/app/(site)/component/login";
 import GetToken from "@/app/(site)/component/getToken";
 
-const Home = () => {
+export default function Home () {
   const [code, setCode] = useState('');
 
   useEffect(() => {
@@ -12,7 +12,5 @@ const Home = () => {
     setCode(urlCode);
   }, []);
 
-  return code ? <GetToken code={code} /> : <Login />;
+  return <GetToken />;
 };
-
-export default Home;

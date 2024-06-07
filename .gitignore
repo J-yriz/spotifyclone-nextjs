@@ -40,3 +40,4 @@ next-env.d.ts
 src/data
 /public/
 test.js
+ngrok.exe

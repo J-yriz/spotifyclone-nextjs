@@ -37,15 +37,15 @@ export default function PlayBack({ token, data }) {
                     <div className={`fixed bottom-5 left-10 right-10 bg-gray-300 rounded-lg flex items-center p-2 justify-between`}>
                         <div className={`profileMusic flex items-center`}>
                             <Image
-                                src={`https://i.scdn.co/image/ab67616d0000b273ff874602e13e9181c26e5f01`}
+                                src={`${data?.[2] || "https://i.scdn.co/image/ab67616d0000b273f4b3b3f3b3b3f3b3f3b3b3f3"}`}
                                 height={70}
                                 width={70}
                                 className={`rounded-lg mr-2`}
-                                alt={`rex orange county`}
+                                alt={`${data?.[4].toLowerCase() || ''}`}
                             />
                             <div className="ml-2 absolute left-20">
-                                <h1 className="font-bold">Best Friends</h1>
-                                <h1 className="text-sm">Rex Orange County</h1>
+                                <h1 className="font-bold">{data?.[3] || ''}</h1>
+                                <h1 className="text-sm">{data?.[4] || ''}</h1>
                             </div>
                         </div>
                         <div className="actionMusic flex flex-col items-center">
