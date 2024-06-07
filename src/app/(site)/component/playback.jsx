@@ -29,15 +29,24 @@ export default function PlayBack({ token, data }) {
     }
     // Todolist tambahkan penyimanan volume user ke dalam bentuk json, jika user baru masuk add user baru dengan volume 100
 
+
+    /**
+     * 
+     * data[0] = uri
+     * data[1] = duration
+     * data[2] = image
+     * data[3] = music_name
+     * data[4] = artist_name
+     * 
+     */
     return (
-        // Example PlayBack Component use Rex Orange County data
         <div className={`playBack`}>
             <div className={`playBack`}>
                 <div className={`container mx-auto relative`}>
                     <div className={`fixed bottom-5 left-10 right-10 bg-gray-300 rounded-lg flex items-center p-2 justify-between`}>
                         <div className={`profileMusic flex items-center`}>
                             <Image
-                                src={`${data?.[2] || "https://i.scdn.co/image/ab67616d0000b273f4b3b3f3b3b3f3b3f3b3b3f3"}`}
+                                src={`${data?.[2] || ""}`}
                                 height={70}
                                 width={70}
                                 className={`rounded-lg mr-2`}
