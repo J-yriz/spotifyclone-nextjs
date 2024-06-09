@@ -13,8 +13,10 @@ export default function Home() {
     const [results, setResults] = useState([]);
     const [data, setData] = useState();
     const [token, setToken] = useState('');
+    const [music, setMusic] = useState();
     
     useEffect(() => {
+        setMusic(new Audio());
         const tokenMiaw = Cookies.get("token");
         const cryptr = new Cryptr('myTotallySecretKey', { encoding: 'base64', pbkdf2Iterations: 10000, saltLength: 20 });
         if (tokenMiaw) {
@@ -26,8 +28,8 @@ export default function Home() {
     return (
         <main>
             <Search setResults={setResults} token={token} lavalink={config.lavalink} />
-            <ResultSearch results={results} setData={setData} />
-            <PlayBack token={token} data={data} />
+            <ResultSearch results={results} setData={setData} lavalink={config.lavalink} audioMusic={music}/>
+            <PlayBack token={token} data={data} audioMusic={music} />
         </main>
     );
 }

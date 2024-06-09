@@ -1,10 +1,25 @@
 import Image from "next/image";
 
-export default function ResultSearch({ results, setData }) {
-  const handleClick = (data) => {
-    setData(data.target.getAttribute('data-music').split(','));
-  };
+export default function ResultSearch({ results, setData, lavalink, audioMusic }) {
   let menitWaktu;
+  const { host, port } = lavalink;
+  const handleClick = async (data) => {
+    setData(data.target.getAttribute('data-music').split(','));
+    await playMusic(data, audioMusic);
+  };
+  async function playMusic(data, audioMusic) {
+    const uri = data.target.getAttribute('data-music').split(',')[0];
+    const response = await fetch(`${host}${port}/audio-stream?url=${uri}`, {
+      method: 'GET',
+    });
+    audioMusic.src = `${host}${port}/audio-stream?url=${uri}`;
+    if (response.ok && audioMusic.src) {
+      audioMusic.load();
+      audioMusic.play();
+    } else {
+      console.error('Failed to play music:', response);
+    }
+  }
 
   return (
     <div className="resultSearch">

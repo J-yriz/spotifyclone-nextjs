@@ -3,7 +3,7 @@ import { useState } from "react";
 
 export default function PlayBack({ token, data }) {
     const [show, setShow] = useState(true);
-    const [volume, setVolume] = useState(100);
+    const [volume, setVolume] = useState(1);
     // buat untuk value dari show diambil dari playMusic yang dijalankan
     const [progress, setProgress] = useState(0);
     const [volumeUser, setVolumeUser] = useState(0);
@@ -19,7 +19,7 @@ export default function PlayBack({ token, data }) {
     const handleVolumeShowVolume = () => {
         setShowVolume(!showVolume);
         if (showVolume) setVolume(0);
-        else if (volumeUser <= 0) setVolume(100);
+        else if (volumeUser <= 0) setVolume(1);
         else setVolume(volumeUser);
     }
     const handleVolume = (e) => {
@@ -29,6 +29,9 @@ export default function PlayBack({ token, data }) {
     }
     // Todolist tambahkan penyimanan volume user ke dalam bentuk json, jika user baru masuk add user baru dengan volume 100
 
+    if (audioMusic.src) {
+        console.log('eaeaea');
+    }
 
     /**
      * 
@@ -99,7 +102,7 @@ export default function PlayBack({ token, data }) {
                                 <path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 0 0 1.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.659 1.905h1.93l4.5 4.5c.945.945 2.561.276 2.561-1.06V4.06ZM17.78 9.22a.75.75 0 1 0-1.06 1.06L18.44 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06l1.72-1.72 1.72 1.72a.75.75 0 1 0 1.06-1.06L20.56 12l1.72-1.72a.75.75 0 1 0-1.06-1.06l-1.72 1.72-1.72-1.72Z" />
                             </svg>
                         </button>
-                        <input type="range" min={0} max={100} value={volume} onChange={handleVolume} className="ml-2 w-24 h-1 bg-gray-300 rounded-lg cursor-pointer accent-blue-600" />
+                        <input type="range" min={0} max={1} step={0.01} value={volume} onChange={handleVolume} className="ml-2 w-24 h-1 bg-gray-300 rounded-lg cursor-pointer accent-blue-600" />
                     </div>
                 </div>
             </div>
