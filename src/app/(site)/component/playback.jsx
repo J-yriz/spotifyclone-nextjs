@@ -1,62 +1,96 @@
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function PlayBack({ token, data }) {
+export default function PlayBack({ data, audioMusic }) {
     const [show, setShow] = useState(true);
     const [volume, setVolume] = useState(1);
-    // buat untuk value dari show diambil dari playMusic yang dijalankan
-    const [progress, setProgress] = useState(0);
+    const [current, setCurrent] = useState(0);
+    const [duration, setDuration] = useState(0);
     const [volumeUser, setVolumeUser] = useState(0);
     const [showVolume, setShowVolume] = useState(true);
-    // buat untuk value dari volume dan showVolume diambil dari data user yang sudah login
-    const simulateProgress = () => {
-        setProgress(prev => (prev < 100 ? prev + 10 : 0));
-    };
+
     const handleShow = () => {
-        simulateProgress();
         setShow(!show);
-    }
+        show ? audioMusic.play() : audioMusic.pause();
+    };
+
     const handleVolumeShowVolume = () => {
         setShowVolume(!showVolume);
         if (showVolume) setVolume(0);
         else if (volumeUser <= 0) setVolume(1);
         else setVolume(volumeUser);
-    }
+    };
+
     const handleVolume = (e) => {
         setVolume(e.target.value);
         setVolumeUser(e.target.value);
         e.target.value > 0 ? setShowVolume(true) : setShowVolume(false);
-    }
-    // Todolist tambahkan penyimanan volume user ke dalam bentuk json, jika user baru masuk add user baru dengan volume 100
+    };
 
-    if (audioMusic.src) {
-        console.log('eaeaea');
+    const durationMusic = (durasi) => {
+        const hasilBagi = (durasi - 1) / 60;
+
+        const jam = Math.floor(hasilBagi);
+        const menit = (Math.round((hasilBagi - jam) * 60)).toString().padStart(2, '0');
+        const hasil = jam + ":" + menit;
+        if (durasi === 0) return "0:00";
+        return hasil;
     }
+
+    // Mengubah volume audio ketika volume berubah
+    useEffect(() => {
+        if (audioMusic) audioMusic.volume = volume;
+    }, [volume, audioMusic]);
+
+    useEffect(() => {
+        if (data?.[1] !== undefined && data?.[1] === false) setShow(false);
+    }, [data]);
+
+    useEffect(() => {
+        const updateProgress = () => {
+            if (audioMusic) {
+                setCurrent(audioMusic.currentTime);
+                setDuration((audioMusic.currentTime / audioMusic.duration) * 100);
+            }
+        };
+
+        if (audioMusic) {
+            audioMusic.addEventListener('timeupdate', updateProgress);
+            audioMusic.paused ? console.log('paused') : console.log('play');
+        };
+
+        return () => {
+            if (audioMusic) {
+                audioMusic.removeEventListener('timeupdate', updateProgress);
+            }
+        };
+    }, [audioMusic]);
 
     /**
      * 
-     * data[0] = uri
-     * data[1] = duration
-     * data[2] = image
-     * data[3] = music_name
-     * data[4] = artist_name
+     * data[0][0] = uri
+     * data[0][1] = duration
+     * data[0][2] = image
+     * data[0][3] = music_name
+     * data[0][4] = artist_name
      * 
      */
+    
     return (
         <div className={`playBack`}>
             <div className={`container mx-auto relative`}>
                 <div className={`fixed bottom-5 left-10 right-10 bg-gray-300 rounded-lg flex items-center p-2 justify-between`}>
                     <div className={`profileMusic flex items-center`}>
                         <Image
-                            src={`${data?.[2] || ""}`}
+                            src={`${data?.[0][2] || ""}`}
                             height={70}
                             width={70}
                             className={`rounded-lg mr-2`}
-                            alt={`${data?.[4].toLowerCase() || ''}`}
+                            alt={`${data?.[0][4].toLowerCase() || ''}`}
                         />
                         <div className="ml-2 absolute left-20">
-                            <h1 className="font-bold">{data?.[3] || ''}</h1>
-                            <h1 className="text-sm">{data?.[4] || ''}</h1>
+                            <h1 className="font-bold">{data?.[0][3] || ''}</h1>
+                            <h1 className="text-sm">{data?.[0][4] || ''}</h1>
                         </div>
                     </div>
                     <div className="actionMusic flex flex-col items-center">
@@ -66,11 +100,13 @@ export default function PlayBack({ token, data }) {
                                     <path d="M9.195 18.44c1.25.714 2.805-.189 2.805-1.629v-2.34l6.945 3.968c1.25.715 2.805-.188 2.805-1.628V8.69c0-1.44-1.555-2.343-2.805-1.628L12 11.029v-2.34c0-1.44-1.555-2.343-2.805-1.628l-7.108 4.061c-1.26.72-1.26 2.536 0 3.256l7.108 4.061Z" />
                                 </svg>
                             </button>
+                            {/* pause */}
                             <button className={`${show ? '' : 'hidden'} hover:scale-110 mr-1`} onClick={handleShow}>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
                                     <path fillRule="evenodd" d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z" clipRule="evenodd" />
                                 </svg>
                             </button>
+                            {/* play */}
                             <button className={`${show ? 'hidden' : ''} hover:scale-110 mr-1`} onClick={handleShow}>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
                                     <path fillRule="evenodd" d="M6.75 5.25a.75.75 0 0 1 .75-.75H9a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H7.5a.75.75 0 0 1-.75-.75V5.25Zm7.5 0A.75.75 0 0 1 15 4.5h1.5a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H15a.75.75 0 0 1-.75-.75V5.25Z" clipRule="evenodd" />
@@ -83,11 +119,11 @@ export default function PlayBack({ token, data }) {
                             </button>
                         </div>
                         <div className={`progresBarr flex items-center`}>
-                            <p className={`mr-5`}>1:38</p>
+                            <p className={`mr-5`}>{durationMusic(Math.round(current))}</p>
                             <div className={`w-96 max-w-xl bg-gray-200 rounded-full h-1 overflow-hidden`}>
-                                <div className={`bg-blue-600 h-1 rounded-full`} style={{ width: `${progress}%` }}></div>
+                                <div className={`bg-blue-600 h-1 rounded-full`} style={{ width: `${duration}%` }}></div>
                             </div>
-                            <p className={`ml-5`}>{data?.[1] || "00:00"}</p>
+                            <p className={`ml-5`}>{data?.[0][1] || "0:00"}</p>
                         </div>
                     </div>
                     <div className={`volumeMusic flex items-center mr-5`}>

@@ -1,24 +1,27 @@
-export default function CheckMe({ music }) {
-    async function handleClick() {
-        const respone = await fetch('http://0.tcp.ap.ngrok.io:16113/take', {
-            method: 'POST',
-            headers: {
-                Authorization: 'testingajah',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                track: `ytsearch:${music}`
-            })
-        })
-        const data = await respone.json();
-        console.log(data);
-    }
+import { useState, useEffect } from "react";
 
-    return (
-        <div className={`checkMe`}>
-            <button onClick={async() => await handleClick()}>
-                Click Me
-            </button>
-        </div>
-    )
+const BelajarUseEffect = () => {
+    useEffect(() => {
+        // Efek yang dijalankan setelah setiap render
+        console.log('Component rendered or count changed');
+
+        // Membersihkan efek
+        return () => {
+            console.log('return function useeffect muncul kapan ?', 'Cleaning up');
+        };
+    }, []);
+    return <div>belajar useeffect</div>
 }
+
+const Main = () => {
+    const [isRendered, setIsRendered] = useState(false)
+    return (
+        <div>
+            <button onClick={() => setIsRendered(!isRendered)}>render</button>
+
+            {isRendered && <BelajarUseEffect />}
+        </div>
+    );
+}
+
+export default Main;

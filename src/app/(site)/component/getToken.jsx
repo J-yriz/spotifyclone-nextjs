@@ -26,10 +26,10 @@ export default function GetToken() {
             const data = await response.json();
             const token = Cookies.get("token");
             if (!token) {
-                Cookies.set("token", data, { expires: 1 / 24 });
+                Cookies.set("token", data);
             } else {
                 Cookies.remove("token");
-                Cookies.set("token", data, { expires: 1 / 24 });
+                Cookies.set("token", data);
             }
             router.push("/spotify");
         } catch (error) {

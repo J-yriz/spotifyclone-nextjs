@@ -4,22 +4,20 @@ export default function ResultSearch({ results, setData, lavalink, audioMusic })
   let menitWaktu;
   const { host, port } = lavalink;
   const handleClick = async (data) => {
-    setData(data.target.getAttribute('data-music').split(','));
-    await playMusic(data, audioMusic);
-  };
-  async function playMusic(data, audioMusic) {
     const uri = data.target.getAttribute('data-music').split(',')[0];
-    const response = await fetch(`${host}${port}/audio-stream?url=${uri}`, {
+    const urlYoutube = `${host}${port}/audio-stream?url=${uri}`;
+    const response = await fetch(urlYoutube, {
       method: 'GET',
     });
-    audioMusic.src = `${host}${port}/audio-stream?url=${uri}`;
+    audioMusic.src = urlYoutube;
     if (response.ok && audioMusic.src) {
       audioMusic.load();
       audioMusic.play();
+      setData([data.target.getAttribute('data-music').split(','), audioMusic.paused]);
     } else {
       console.error('Failed to play music:', response);
     }
-  }
+  };
 
   return (
     <div className="resultSearch">
@@ -57,7 +55,7 @@ function durationMusic(durasi) {
   const hasilBagi = durasi / 60000;
 
   const jam = Math.floor(hasilBagi);
-  const menit = Math.round((hasilBagi - jam) * 60) - 1;
+  const menit = (Math.round((hasilBagi - jam) * 60) - 1).toString().padStart(2, '0');
 
   return jam + ":" + menit;
 }

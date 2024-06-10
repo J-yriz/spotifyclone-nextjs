@@ -14,7 +14,7 @@ export default function Search({ setResults, token, lavalink }) {
                 router.push('/');
             } else {
                 const dataFilter = data.map(async(e) => {
-                    const data = await getLink(`${e.album.name} - ${e.artists[0].name}`, lavalink);
+                    const data = await getLink(`${e.album.name} - ${e.artists[0].name} lyrics`, lavalink);
                     return {
                         music_name: e.album.name,
                         artist_name: e.artists[0].name,

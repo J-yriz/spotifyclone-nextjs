@@ -1,7 +1,7 @@
 'use client';
 import Cryptr from 'cryptr';
 import Cookies from 'js-cookie';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import config from '@/config';
 import Search from "../component/search";
@@ -29,7 +29,7 @@ export default function Home() {
         <main>
             <Search setResults={setResults} token={token} lavalink={config.lavalink} />
             <ResultSearch results={results} setData={setData} lavalink={config.lavalink} audioMusic={music}/>
-            <PlayBack token={token} data={data} audioMusic={music} />
+            <PlayBack data={data} audioMusic={music} />
         </main>
     );
 }
