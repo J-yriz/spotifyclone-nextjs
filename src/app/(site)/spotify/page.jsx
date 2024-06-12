@@ -10,10 +10,11 @@ import PlayBack from '../component/playBack';
 import CheckMe from '../component/checkMe';
 
 export default function Home() {
-    const [results, setResults] = useState([]);
+    const urlYoutube = useRef([]);
     const [data, setData] = useState();
-    const [token, setToken] = useState('');
     const [music, setMusic] = useState();
+    const [token, setToken] = useState('');
+    const [results, setResults] = useState([]);
     
     useEffect(() => {
         setMusic(new Audio());
@@ -28,8 +29,8 @@ export default function Home() {
     return (
         <main>
             <Search setResults={setResults} token={token} lavalink={config.lavalink} />
-            <ResultSearch results={results} setData={setData} lavalink={config.lavalink} audioMusic={music}/>
-            <PlayBack data={data} audioMusic={music} />
+            <ResultSearch results={results} setData={setData} lavalink={config.lavalink} audioMusic={music} queueMusic={urlYoutube}/>
+            <PlayBack data={data} audioMusic={music} queueMusic={urlYoutube}/>
         </main>
     );
 }

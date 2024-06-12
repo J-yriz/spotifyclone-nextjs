@@ -11,14 +11,17 @@ export default function Search({ setResults, token, lavalink }) {
             const data = await getID(searchValue, token);
             if ( data === 401 ) {
                 alert('Token Expired');
-                router.push('/');
+                router.push('/?refresh=true');
             } else {
                 const dataFilter = data.map(async(e) => {
-                    const data = await getLink(`${e.album.name} - ${e.artists[0].name} lyrics`, lavalink);
+                    const data = await getLink(`${e.name} - ${e.artists[0].name} lyrics`, lavalink);
                     return {
-                        music_name: e.album.name,
+                        music_name: e.name,
                         artist_name: e.artists[0].name,
+                        artist_url: e.artists[0].external_urls.spotify,
                         image: e.album.images[0].url,
+                        album_name: e.album.name,
+                        album_url: e.album.external_urls.spotify,
                         duration: data[0],
                         uri: data[1]
                     }

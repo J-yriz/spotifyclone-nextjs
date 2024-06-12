@@ -1,13 +1,36 @@
+import Link from "next/link";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
-export default function PlayBack({ data, audioMusic }) {
+export default function PlayBack({ data, audioMusic, queueMusic }) {
+    const currentIndex = useRef(0);
     const [show, setShow] = useState(true);
     const [volume, setVolume] = useState(1);
     const [current, setCurrent] = useState(0);
-    const [duration, setDuration] = useState(0);
+    const [progress, setProgress] = useState(0);
+    const [nameMusic, setNameMusic] = useState(['','']);
+    const [nameArtist, setNameArtist] = useState(['','']);
+    const [image, setImage] = useState("/blank.png");
+    const [duration, setDuration] = useState("0:00");
     const [volumeUser, setVolumeUser] = useState(0);
     const [showVolume, setShowVolume] = useState(true);
+
+    const changeMusic = (direction) => {
+        if (direction === 'next' ? currentIndex.current < queueMusic.current.length-1 : currentIndex.current > 0) {
+            currentIndex.current = direction === 'next' ? currentIndex.current + 1 : currentIndex.current - 1;
+            const currentMusic = queueMusic.current[currentIndex.current];
+            audioMusic.src = currentMusic[0];
+            audioMusic.load();
+            audioMusic.play();
+            setImage(currentMusic[2]);
+            setNameMusic([currentMusic[3], currentMusic[6]]);
+            setNameArtist([currentMusic[4], currentMusic[5]]);
+            setDuration(currentMusic[1]);
+        }
+    };
+    
+    const previusMusic = () => changeMusic('previous');
+    const nextMusic = () => changeMusic('next');
 
     const handleShow = () => {
         setShow(!show);
@@ -22,80 +45,86 @@ export default function PlayBack({ data, audioMusic }) {
     };
 
     const handleVolume = (e) => {
-        setVolume(e.target.value);
-        setVolumeUser(e.target.value);
-        e.target.value > 0 ? setShowVolume(true) : setShowVolume(false);
+        const volumeValue = e.target.value;
+        setVolume(volumeValue);
+        setVolumeUser(volumeValue);
+        setShowVolume(volumeValue > 0);
     };
 
-    const durationMusic = (durasi) => {
+    function durationMusic (durasi) {
+        if (durasi === 0) return "0:00";
         const hasilBagi = (durasi - 1) / 60;
-
         const jam = Math.floor(hasilBagi);
         const menit = (Math.round((hasilBagi - jam) * 60)).toString().padStart(2, '0');
-        const hasil = jam + ":" + menit;
-        if (durasi === 0) return "0:00";
-        return hasil;
+        return `${jam}:${menit}`;
     }
 
-    // Mengubah volume audio ketika volume berubah
     useEffect(() => {
         if (audioMusic) audioMusic.volume = volume;
     }, [volume, audioMusic]);
 
     useEffect(() => {
-        if (data?.[1] !== undefined && data?.[1] === false) setShow(false);
+        if (data !== undefined && data === false) {
+            setShow(false);
+            const currentMusic = queueMusic.current[0];
+            setImage(currentMusic[2]);
+            setNameMusic([currentMusic[3], currentMusic[6]]);
+            setNameArtist([currentMusic[4], currentMusic[5]]);
+            setDuration(currentMusic[1]);
+        }
     }, [data]);
 
     useEffect(() => {
         const updateProgress = () => {
             if (audioMusic) {
                 setCurrent(audioMusic.currentTime);
-                setDuration((audioMusic.currentTime / audioMusic.duration) * 100);
+                setProgress((audioMusic.currentTime / audioMusic.duration) * 100);
+                if (audioMusic.paused === true && currentIndex === (queueMusic.current.length-1)) setShow(true);
             }
         };
 
         if (audioMusic) {
             audioMusic.addEventListener('timeupdate', updateProgress);
-            audioMusic.paused ? console.log('paused') : console.log('play');
         };
 
         return () => {
             if (audioMusic) {
                 audioMusic.removeEventListener('timeupdate', updateProgress);
+                console.log('diclear nich');
             }
         };
     }, [audioMusic]);
 
-    /**
-     * 
-     * data[0][0] = uri
-     * data[0][1] = duration
-     * data[0][2] = image
-     * data[0][3] = music_name
-     * data[0][4] = artist_name
-     * 
-     */
-    
     return (
         <div className={`playBack`}>
             <div className={`container mx-auto relative`}>
                 <div className={`fixed bottom-5 left-10 right-10 bg-gray-300 rounded-lg flex items-center p-2 justify-between`}>
                     <div className={`profileMusic flex items-center`}>
                         <Image
-                            src={`${data?.[0][2] || ""}`}
+                            src={image}
                             height={70}
                             width={70}
                             className={`rounded-lg mr-2`}
-                            alt={`${data?.[0][4].toLowerCase() || ''}`}
+                            alt={nameArtist[0].toLocaleLowerCase()}
                         />
-                        <div className="ml-2 absolute left-20">
-                            <h1 className="font-bold">{data?.[0][3] || ''}</h1>
-                            <h1 className="text-sm">{data?.[0][4] || ''}</h1>
+                        <div className="miawmiaw ml-2 flex flex-col absolute left-20">
+                            {/* music name */}
+                            <Link className="font-bold hover:underline" href={nameMusic[1]} target="_blank">
+                                {nameMusic[0]}
+                            </Link>
+                            {/* artist */}
+                            <Link className="text-sm hover:underline" href={nameArtist[1]} target="_blank">
+                                {nameArtist[0]}
+                            </Link>
                         </div>
                     </div>
                     <div className="actionMusic flex flex-col items-center">
                         <div className="doingMusic flex items-center">
-                            <button className="mr-2">
+                            <button className={`mr-2`}>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512"><path fill="none" stroke="black" strokeLinecap="round" strokeLinejoin="round" strokeWidth={50} d="m400 304l48 48l-48 48m0-288l48 48l-48 48M64 352h85.19a80 80 0 0 0 66.56-35.62L256 256"></path><path fill="none" stroke="black" strokeLinecap="round" strokeLinejoin="round" strokeWidth={50} d="M64 160h85.19a80 80 0 0 1 66.56 35.62l80.5 120.76A80 80 0 0 0 362.81 352H416m0-192h-53.19a80 80 0 0 0-66.56 35.62L288 208"></path></svg>
+                            </button>
+                            {/* previus */}
+                            <button className={`mr-2`} onClick={previusMusic}>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
                                     <path d="M9.195 18.44c1.25.714 2.805-.189 2.805-1.629v-2.34l6.945 3.968c1.25.715 2.805-.188 2.805-1.628V8.69c0-1.44-1.555-2.343-2.805-1.628L12 11.029v-2.34c0-1.44-1.555-2.343-2.805-1.628l-7.108 4.061c-1.26.72-1.26 2.536 0 3.256l7.108 4.061Z" />
                                 </svg>
@@ -112,18 +141,23 @@ export default function PlayBack({ data, audioMusic }) {
                                     <path fillRule="evenodd" d="M6.75 5.25a.75.75 0 0 1 .75-.75H9a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H7.5a.75.75 0 0 1-.75-.75V5.25Zm7.5 0A.75.75 0 0 1 15 4.5h1.5a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H15a.75.75 0 0 1-.75-.75V5.25Z" clipRule="evenodd" />
                                 </svg>
                             </button>
-                            <button>
+                            {/* next */}
+                            <button className={`mr-2`} onClick={nextMusic}>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
                                     <path d="M5.055 7.06C3.805 6.347 2.25 7.25 2.25 8.69v8.122c0 1.44 1.555 2.343 2.805 1.628L12 14.471v2.34c0 1.44 1.555 2.343 2.805 1.628l7.108-4.061c1.26-.72 1.26-2.536 0-3.256l-7.108-4.061C13.555 6.346 12 7.249 12 8.689v2.34L5.055 7.061Z" />
                                 </svg>
+                            </button>
+                            {/* repeat */}
+                            <button>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 512 512"><path fill="none" stroke="black" strokeLinecap="round" strokeLinejoin="round" strokeWidth={50} d="m320 120l48 48l-48 48"></path><path fill="none" stroke="black" strokeLinecap="round" strokeLinejoin="round" strokeWidth={50} d="M352 168H144a80.24 80.24 0 0 0-80 80v16m128 128l-48-48l48-48"></path><path fill="none" stroke="black" strokeLinecap="round" strokeLinejoin="round" strokeWidth={50} d="M160 344h208a80.24 80.24 0 0 0 80-80v-16"></path></svg>
                             </button>
                         </div>
                         <div className={`progresBarr flex items-center`}>
                             <p className={`mr-5`}>{durationMusic(Math.round(current))}</p>
                             <div className={`w-96 max-w-xl bg-gray-200 rounded-full h-1 overflow-hidden`}>
-                                <div className={`bg-blue-600 h-1 rounded-full`} style={{ width: `${duration}%` }}></div>
+                                <div className={`bg-blue-600 h-1 rounded-full`} style={{ width: `${progress}%` }}></div>
                             </div>
-                            <p className={`ml-5`}>{data?.[0][1] || "0:00"}</p>
+                            <p className={`ml-5`}>{duration}</p>
                         </div>
                     </div>
                     <div className={`volumeMusic flex items-center mr-5`}>
