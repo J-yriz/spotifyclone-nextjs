@@ -2,22 +2,26 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 
-export default function PlayBack({ data, audioMusic, queueMusic }) {
-    const currentIndex = useRef(0);
+import QueueList from "./queueList";
+
+export default function PlayBack({ data, audioMusic, queueMusic, currentIndex }) {
     const [show, setShow] = useState(true);
     const [volume, setVolume] = useState(1);
     const [current, setCurrent] = useState(0);
     const [progress, setProgress] = useState(0);
-    const [nameMusic, setNameMusic] = useState(['','']);
-    const [nameArtist, setNameArtist] = useState(['','']);
-    const [image, setImage] = useState("/blank.png");
-    const [duration, setDuration] = useState("0:00");
     const [volumeUser, setVolumeUser] = useState(0);
+    const [duration, setDuration] = useState("0:00");
+    const [image, setImage] = useState("/blank.png");
     const [showVolume, setShowVolume] = useState(true);
+    const [nameMusic, setNameMusic] = useState(['', '']);
+    const [nameArtist, setNameArtist] = useState(['', '']);
+    const [arrayDataMusic, setArrayDataMusic] = useState(['', '']);
+    const [showModalQueue, setShowModalQueue] = useState(false);
 
     const changeMusic = (direction) => {
-        if (direction === 'next' ? currentIndex.current < queueMusic.current.length-1 : currentIndex.current > 0) {
+        if (direction === 'next' ? currentIndex.current < queueMusic.current.length - 1 : currentIndex.current > 0) {
             currentIndex.current = direction === 'next' ? currentIndex.current + 1 : currentIndex.current - 1;
+            if (show) setShow(false);
             const currentMusic = queueMusic.current[currentIndex.current];
             audioMusic.src = currentMusic[0];
             audioMusic.load();
@@ -28,7 +32,7 @@ export default function PlayBack({ data, audioMusic, queueMusic }) {
             setDuration(currentMusic[1]);
         }
     };
-    
+
     const previusMusic = () => changeMusic('previous');
     const nextMusic = () => changeMusic('next');
 
@@ -51,7 +55,7 @@ export default function PlayBack({ data, audioMusic, queueMusic }) {
         setShowVolume(volumeValue > 0);
     };
 
-    function durationMusic (durasi) {
+    function durationMusic(durasi) {
         if (durasi === 0) return "0:00";
         const hasilBagi = (durasi - 1) / 60;
         const jam = Math.floor(hasilBagi);
@@ -64,22 +68,33 @@ export default function PlayBack({ data, audioMusic, queueMusic }) {
     }, [volume, audioMusic]);
 
     useEffect(() => {
-        if (data !== undefined && data === false) {
+        const handdle = () => {
             setShow(false);
-            const currentMusic = queueMusic.current[0];
+            const currentMusic = queueMusic.current[currentIndex.current];
             setImage(currentMusic[2]);
             setNameMusic([currentMusic[3], currentMusic[6]]);
             setNameArtist([currentMusic[4], currentMusic[5]]);
             setDuration(currentMusic[1]);
         }
-    }, [data]);
+        if ((data !== undefined && data === false) || (currentIndex.current >= 1 && data !== undefined && data === true)) handdle();
+    }, [data, queueMusic, currentIndex]);
+
+    useEffect(() => {
+        if (audioMusic) {
+            if ( show && audioMusic.paused === true && audioMusic.currentTime === audioMusic.duration && currentIndex.current === (queueMusic.current.length - 1)) {
+                nextMusic();
+            }
+        }
+    }, [queueMusic, audioMusic, show]);
 
     useEffect(() => {
         const updateProgress = () => {
             if (audioMusic) {
                 setCurrent(audioMusic.currentTime);
                 setProgress((audioMusic.currentTime / audioMusic.duration) * 100);
-                if (audioMusic.paused === true && currentIndex === (queueMusic.current.length-1)) setShow(true);
+                setArrayDataMusic([audioMusic.currentTime, audioMusic.duration]);
+                if (audioMusic.paused === true && currentIndex.current === (queueMusic.current.length - 1)) setShow(true);
+                if (audioMusic.paused === true && currentIndex.current !== (queueMusic.current.length - 1) && audioMusic.currentTime === audioMusic.duration) nextMusic();
             }
         };
 
@@ -93,7 +108,7 @@ export default function PlayBack({ data, audioMusic, queueMusic }) {
                 console.log('diclear nich');
             }
         };
-    }, [audioMusic]);
+    }, [audioMusic, queueMusic]);
 
     return (
         <div className={`playBack`}>
@@ -160,6 +175,13 @@ export default function PlayBack({ data, audioMusic, queueMusic }) {
                             <p className={`ml-5`}>{duration}</p>
                         </div>
                     </div>
+                    <div className={`queueMusic.current`}>
+                        <button onClick={() => setShowModalQueue(true)}>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z" />
+                            </svg>
+                        </button>
+                    </div>
                     <div className={`volumeMusic flex items-center mr-5`}>
                         <button className={showVolume ? '' : 'hidden'} onClick={handleVolumeShowVolume}>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
@@ -176,6 +198,7 @@ export default function PlayBack({ data, audioMusic, queueMusic }) {
                     </div>
                 </div>
             </div>
+            {showModalQueue && <QueueList setShowModal={setShowModalQueue} dataQueue={queueMusic.current} currentIndex={currentIndex.current} durationMusic={arrayDataMusic} />}
         </div>
     )
 }

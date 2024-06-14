@@ -1,6 +1,6 @@
 import { useRouter } from "next/navigation";
 
-export default function Search({ setResults, token, lavalink }) {
+export default function Search({ setResults, token, getDataLavalink }) {
     const router = useRouter();
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -14,7 +14,7 @@ export default function Search({ setResults, token, lavalink }) {
                 router.push('/?refresh=true');
             } else {
                 const dataFilter = data.map(async(e) => {
-                    const data = await getLink(`${e.name} - ${e.artists[0].name} lyrics`, lavalink);
+                    const data = await getLink(`${e.name} - ${e.artists[0].name} lyrics`, getDataLavalink);
                     return {
                         music_name: e.name,
                         artist_name: e.artists[0].name,
@@ -78,10 +78,10 @@ async function getID(artist, access_token) {
 
 }
 
-async function getLink(name, lavalink) {
-    const { host, port, password } = lavalink;
+async function getLink(name, getDataLavalink) {
+    const { host, port, password } = getDataLavalink;
     if (name) {
-        const respone = await fetch(`${host}${port}/take`, {
+        const respone = await fetch(`${host}:${port}/take`, {
             method: 'POST',
             headers: {
                 Authorization: password,

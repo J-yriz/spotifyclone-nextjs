@@ -2,8 +2,7 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 
-import config from "@/config";
-const { client_id, client_secret, redirect_uri, lavalink: { host, port } } = config;
+import config, { getBackendHost } from "@/config";
 
 export default function GetToken() {
     const router = useRouter();
@@ -13,18 +12,25 @@ export default function GetToken() {
         diGunakan.current = true;
 
         try {
-            const response = await fetch(`${host}${port}/callback`, {
+            const response = await fetch(`${getBackendHost()}/callback`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
+                // The Client Object Data to send.
                 body: JSON.stringify({
-                    client_id,
-                    client_secret
+                    client_id: config.client_id,
+                    client_secret: config.client_secret,
                 }),
             });
-            const data = await response.json();
-            const token = Cookies.get("token");
+
+            if (!response) {
+                console.log("no data here.");
+                return;
+            }
+
+            const data = await response.text();
+            const token =  Cookies.get("token", data);
             if (!token) {
                 Cookies.set("token", data);
             } else {
@@ -35,7 +41,7 @@ export default function GetToken() {
         } catch (error) {
             console.error("Failed to get access token:", error);
         }
-    }
+    };
     useEffect(() => {
         if (!diGunakan.current) getToken();
     }, []);

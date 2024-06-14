@@ -38,6 +38,7 @@ next-env.d.ts
 # Adder
 .env
 src/data
+src/app/(site)/testing
 /public/
 test.js
 ngrok.exe
