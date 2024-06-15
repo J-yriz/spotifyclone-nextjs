@@ -30,7 +30,7 @@ export default function Home() {
         if (tokenMiaw) {
             setToken(cryptr.decrypt(tokenMiaw));
         }
-    }, []);
+    }, [tokenMiaw]);
 
     return (
         <main>

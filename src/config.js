@@ -6,8 +6,8 @@ const config = {
     redirect_uri: '' || process.env.NEXT_PUBLIC_REDIRECT_URI,
     // Lavalink configuration
     lavalink: {
-        host: 'http://127.0.0.1' || process.env.NEXT_PUBLIC_HOST,
-        port: '3000' || process.env.NEXT_PUBLIC_PORT,
+        host: 'http://sg3.localto.net' || process.env.NEXT_PUBLIC_HOST,
+        port: '7682' || process.env.NEXT_PUBLIC_PORT,
         password: 'testingajah' || process.env.NEXT_PUBLIC_PASSWORD_LAVALINK,
         secure: true
     }

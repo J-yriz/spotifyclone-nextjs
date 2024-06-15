@@ -36,8 +36,8 @@ export default function QueueList({ setShowModal, dataQueue, currentIndex, durat
                         <div className={`queueList ${dataQueue.slice(currentIndex).length > 4 ? 'overflow-y-scroll h-96' : ''}`}>
                             <p className={`font-semibold mb-2`}>Now Playing</p>
                             {dataQueue && dataQueue.slice(currentIndex).map((x, i) => (
-                                <div>
-                                    <div key={i} className={`flex items-center bg-gray-200 hover:bg-gray-300 p-3 rounded-lg ${i > 0 ? 'mt-2' : ''}`}>
+                                <div key={i}>
+                                    <div className={`flex items-center bg-gray-200 hover:bg-gray-300 p-3 rounded-lg ${i > 0 ? 'mt-2' : ''}`}>
                                         <Image
                                             src={x[2]}
                                             height={70}

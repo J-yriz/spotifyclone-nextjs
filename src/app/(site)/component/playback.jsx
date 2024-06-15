@@ -127,7 +127,7 @@ export default function PlayBack({ data, audioMusic, queueMusic, currentIndex, l
                 nextMusic();
             }
         }
-    }, [queueMusic, audioMusic, show]);
+    }, [queueMusic, audioMusic, currentIndex, nextMusic, show]);
 
     useEffect(() => {
         const updateProgress = () => {
@@ -150,7 +150,7 @@ export default function PlayBack({ data, audioMusic, queueMusic, currentIndex, l
                 audioMusic.removeEventListener('timeupdate', updateProgress);
             }
         };
-    }, [audioMusic, queueMusic, loopingMusic]);
+    }, [audioMusic, queueMusic, currentIndex, handleLoopingMusic, nextMusic, loopingMusic]);
 
     return (
         <div className={`playBack`}>

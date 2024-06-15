@@ -44,5 +44,5 @@ export default function GetToken() {
     };
     useEffect(() => {
         if (!diGunakan.current) getToken();
-    }, []);
+    }, [getToken]);
 }
