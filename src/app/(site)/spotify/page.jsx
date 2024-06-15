@@ -14,6 +14,8 @@ export default function Home() {
     const currentIndex = useRef(0);
     const [data, setData] = useState();
     const [music, setMusic] = useState();
+    const [lyricsMusic, setLyricsMusic] = useState([]);
+    const [lyricsShow, setLyricsShow] = useState(false);
     const [token, setToken] = useState("");
     const [results, setResults] = useState([]);
     const tokenMiaw = Cookies.get("token");
@@ -33,8 +35,8 @@ export default function Home() {
     return (
         <main>
             <Search token={token} setResults={setResults} getDataLavalink={config.lavalink} />
-            <ResultSearch results={results} setData={setData} getUrlBackend={getBackendHost} audioMusic={music} queueMusic={queueMusic} currentIndex={currentIndex} />
-            <PlayBack data={data} setData={setData} audioMusic={music} queueMusic={queueMusic} currentIndex={currentIndex} />
+            <ResultSearch results={results} dataAudio={data} setDataAudio={setData} getUrlBackend={getBackendHost} audioMusic={music} queueMusic={queueMusic} currentIndex={currentIndex} lyricsShow={lyricsShow} lyricsMusic={lyricsMusic} />
+            <PlayBack data={data} setData={setData} audioMusic={music} queueMusic={queueMusic} currentIndex={currentIndex} lyricsShow={lyricsShow} setLyricsShow={setLyricsShow} setLyricsMusic={setLyricsMusic} />
         </main>
     );
 }
